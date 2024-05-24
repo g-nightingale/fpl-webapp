@@ -160,6 +160,8 @@ cython_debug/
 #.idea/
 
 *.zip
-.vscode
+.vscode/
+
+.DS_Store
 
 infrastructure/.terraform/
