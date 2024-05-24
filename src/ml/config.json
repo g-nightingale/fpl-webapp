@@ -1,0 +1,41 @@
+{
+    "n_estimators":20,
+    "test_size": 0.2,
+    "random_state": 42,
+    "top_n_features": 50,
+    "min_child_samples": 50,
+    "target_feature": "total_points_sum_n3r",
+    "id_features": [
+        "element",
+        "player_name",
+        "team_name",
+        "position",
+        "round"
+    ],
+    "holdout_features": [
+        "value",
+        "total_points_cum"
+    ],
+    "features_to_drop": [	
+        "fixture",
+        "opp_round_1",	
+        "opp_round_2",	
+        "opp_round_3",	
+        "opp_round_4",	
+        "opp_round_5",	
+        "opp_round_6",
+        "total_points_cum",	
+        "total_points_sum_nr",	
+        "total_points_sum_n3r",	
+        "total_points_sum_n6r",	
+        "total_points_sum_all",	
+        "total_points_per_gw_forward",	
+        "value_nr",	
+        "value_change_nr",	
+        "selected_nr",	
+        "transfers_in_nr",	
+        "transfers_out_nr",	
+        "transfers_balance_nr",	
+        "ict_index_nr"
+    ]
+}

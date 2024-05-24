@@ -1,0 +1,62 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Application and Infrastructure
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install Python dependencies for Lambda
+      run: |
+        cd src/lambda/function1
+        pip install -r requirements.txt --target ./package
+
+    - name: Package Lambda Function
+      run: |
+        cd src/lambda/function1/package
+        zip -r ../../../../lambda_function.zip .
+        cd ..
+        zip -g ../lambda_function.zip lambda_function.py
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Initialize Terraform
+      run: |
+        cd infrastructure/environments/production
+        terraform init
+
+    - name: Apply Terraform
+      run: |
+        cd infrastructure/environments/production
+        terraform apply -auto-approve
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Deploy Lambda Function
+      run: |
+        aws lambda update-function-code --function-name myLambdaFunction --zip-file fileb://lambda_function.zip
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

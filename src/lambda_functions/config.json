@@ -1,0 +1,37 @@
+{
+    "lambda_extract": {
+        "output_zip_file": "lambda_extract",
+        "function_file": "../db/extract_and_load/lambda_extract_and_load.py",
+        "requirements_file": "",
+        "helper_files": [
+            "../db/extract_and_load/extract_and_load.py"
+        ]
+    },
+    "lambda_transform": {
+        "output_zip_file": "lambda_transform",
+        "function_file": "../db/transform/lambda_transform.py",
+        "requirements_file": "",
+        "helper_files": [
+            "../db/transform/transform.py",
+            "../db/transform/transform_helpers.py"
+        ]
+    },
+    "lambda_modelling": {
+        "output_zip_file": "lambda_modelling",
+        "function_file": "../ml/lambda_train.py",
+        "requirements_file": "",
+        "helper_files": [
+            "../ml/train.py",
+            "../ml/config.json"
+        ]
+    },
+    "lambda_dynamodb_load": {
+        "output_zip_file": "lambda_dynamodb_load",
+        "function_file": "../db/dynamodb_load/lambda_dynamodb_load.py",
+        "requirements_file": "../db/dynamodb_load/requirements.txt",
+        "helper_files": [
+            "../db/transform/transform_helpers.py",
+            "../utilities/dynamodb_helpers.py"
+        ]
+    }
+}

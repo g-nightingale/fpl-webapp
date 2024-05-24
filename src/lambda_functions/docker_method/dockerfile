@@ -1,0 +1,39 @@
+# Use the specific AWS Lambda Python runtime as the base image
+FROM amazonlinux:2
+
+# Install necessary build tools and libraries
+RUN yum -y groupinstall "Development Tools" && \
+    yum -y install openssl-devel bzip2-devel libffi-devel zip && \
+    yum clean all
+
+# Download Python 3.9
+RUN curl -O https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz
+
+# Extract and build Python from source
+RUN tar -xf Python-3.9.10.tgz && \
+    cd Python-3.9.10 && \
+    ./configure --enable-optimizations && \
+    make altinstall
+
+# Cleanup
+RUN rm -rf Python-3.9.10.tgz Python-3.9.10
+
+# Update pip
+RUN python3.9 -m pip install --upgrade pip
+
+# Create a directory for the layer
+RUN mkdir -p /my-layer/python
+
+# Create a virtual environment in the image
+RUN python3.9 -m venv /opt/venv
+
+# Activate the virtual environment and install dependencies
+RUN . /opt/venv/bin/activate && \
+    python3.9 -m pip install psycopg2 -t /my-layer/python/lib/python3.9/site-packages
+
+
+RUN cd /my-layer && \
+    zip -r lambda_layer.zip python;
+
+# Set the entrypoint to keep the container running
+ENTRYPOINT ["/bin/bash", "-c", "sleep infinity"]

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPL Stats Wizard</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+
+    <script>        
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "columnDefs": [
+                    {
+                        "targets": 6, // Target column (index starts from 0)
+                        "createdCell": function (td, cellData, rowData, row, col) {
+                            var color = valueToColor(cellData, 0, 20); // Value range
+                            $(td).css('background-color', color); // Apply the background color to the cell
+                        }
+                    }
+                ]
+            });
+        });
+
+        function valueToColor(value, min, max) {
+            var ratio = 1 - (value - min) / (max - min);
+            var hue = 120 - (ratio * 120); // Adjust the hue for a subdued green
+            var saturation = 80; // Saturation
+            var lightness = 50; // Lightness
+            console.log(ratio)
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+    </script>
+    <style>
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            color: #203857
+        }
+        .navbar {
+            margin-bottom: 20px;
+            overflow: hidden;
+            background-color: #203857;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+        }
+        .header img {
+            margin-right: 20px;
+        }
+    </style>
+    
+</head>
+<body>
+
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/wizz.webp') }}" alt="Your Logo" style="height:80px;"> <!-- Adjust the height as needed -->
+        <h1>FPL Stats Wizard</h1>
+    </div>
+    
+    <div class="navbar">
+        <a href="/">Player Point Predictions</a>
+        <!-- <a href="/page2">Player Statistics</a>
+        <a href="/page3">Team Statistics</a> -->
+    </div>
+
+    <!-- The content of your page goes here -->
+    <table id="dataTable" class="display">
+        <thead>
+            <tr>
+                <th>Player Name</th>
+                <th>Team Name</th>
+                <th>Position</th>
+                <th>Round</th>
+                <th>Value</th>
+                <th>Total Points</th>
+                <th>Expected Points Next 3 Rounds</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row.player_name }}</td>
+                <td>{{ row.team_name }}</td>
+                <td>{{ row.position }}</td>
+                <td>{{ row.round }}</td>
+                <td>{{ row.value }}</td>
+                <td>{{ row.total_points_cum }}</td>
+                <td>{{ row.predicted_points_n3r }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</body>
+</html>
