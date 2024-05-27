@@ -32,15 +32,32 @@ jobs:
       - name: List root directory
         run: ls ~/runners
 
-      - name: Run build and push script
+      - name: Build and push extract image
         run: | 
-          cd ${GITHUB_WORKSPACE}/src/db/extract_and_load
-          docker_image_build.sh
-          cd ${GITHUB_WORKSPACE}/src/db/transform
-          docker_image_build.sh
-          cd ${GITHUB_WORKSPACE}/src/db/dynamodb_load
-          docker_image_build.sh
-          cd ${GITHUB_WORKSPACE}/src/ml
+          cd src/db/extract_and_load
+          pwd
+          ls -la
+          ./docker_image_build.sh
+
+      - name: Build and push transform image
+        run: | 
+          cd src/db/transform
+          pwd
+          ls -la
+          ./docker_image_build.sh
+
+      - name: Build and push dynamodb_load image
+        run: | 
+          cd src/db/dynamodb_load
+          pwd
+          ls -la
+          ./docker_image_build.sh
+
+      - name: Build and push ml image
+        run: | 
+          cd src/ml
+          pwd
+          ls -la
           docker_image_build.sh
 
   deploy:
