@@ -34,13 +34,13 @@ jobs:
 
       - name: Run build and push script
         run: | 
-          cd /src/db/extract_and_load
+          cd ~/src/db/extract_and_load
           docker_image_build.sh
-          cd /src/db/transform
+          cd ~/src/db/transform
           docker_image_build.sh
-          cd /src/db/dynamodb_load
+          cd ~/src/db/dynamodb_load
           docker_image_build.sh
-          cd /src/ml
+          cd ~/src/ml
           docker_image_build.sh
 
   deploy:
