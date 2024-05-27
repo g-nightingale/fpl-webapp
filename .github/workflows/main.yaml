@@ -30,17 +30,17 @@ jobs:
           aws configure set default.region ${{ secrets.AWS_REGION }}
 
       - name: List root directory
-        run: ls ~
+        run: ls ~/runners
 
       - name: Run build and push script
         run: | 
-          cd /home/runner/src/db/extract_and_load
+          cd ~/runners/home/src/db/extract_and_load
           docker_image_build.sh
-          cd /home/runner/src/db/transform
+          cd ~/runners/home/src/db/transform
           docker_image_build.sh
-          cd /home/runner/src/db/dynamodb_load
+          cd ~/runners/home/src/db/dynamodb_load
           docker_image_build.sh
-          cd /home/runner/src/ml
+          cd ~/runners/home/src/ml
           docker_image_build.sh
 
   deploy:
