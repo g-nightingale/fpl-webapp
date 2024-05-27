@@ -34,13 +34,13 @@ jobs:
 
       - name: Run build and push script
         run: | 
-          cd ~/runners/home/src/db/extract_and_load
+          cd ${GITHUB_WORKSPACE}/src/db/extract_and_load
           docker_image_build.sh
-          cd ~/runners/home/src/db/transform
+          cd ${GITHUB_WORKSPACE}/src/db/transform
           docker_image_build.sh
-          cd ~/runners/home/src/db/dynamodb_load
+          cd ${GITHUB_WORKSPACE}/src/db/dynamodb_load
           docker_image_build.sh
-          cd ~/runners/home/src/ml
+          cd ${GITHUB_WORKSPACE}/src/ml
           docker_image_build.sh
 
   deploy:
