@@ -29,6 +29,9 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set default.region ${{ secrets.AWS_REGION }}
 
+      - name: List root directory
+        run: ls -la
+
       - name: Run build and push script
         run: | 
           cd /src/db/extract_and_load
