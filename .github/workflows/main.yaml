@@ -29,12 +29,22 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set default.region ${{ secrets.AWS_REGION }}
 
+      - name: List root directory
+        run: ls -la
+
+      - name: List utilities directory
+        run: ls -la utilities
+
       - name: Run build and push script
         run: | 
-          ./src/db/extract_and_load/docker_image_build.sh
-          ./src/db/transform/docker_image_build.sh
-          ./src/db/dynamodb_load/docker_image_build.sh
-          ./src/ml/docker_image_build.sh
+          cd /src/db/extract_and_load
+          docker_image_build.sh
+          cd /src/db/transform
+          docker_image_build.sh
+          cd /src/db/dynamodb_load
+          docker_image_build.sh
+          cd /src/ml
+          docker_image_build.sh
 
   deploy:
     name: Deploy Application and Infrastructure
