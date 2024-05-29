@@ -58,7 +58,7 @@ jobs:
           cd src/ml
           pwd
           ls -la
-          docker_image_build.sh
+          ./docker_image_build.sh
 
   deploy:
     name: Deploy Application and Infrastructure
