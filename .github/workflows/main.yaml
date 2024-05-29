@@ -20,9 +20,8 @@ jobs:
 
       - name: Check credentials
         run: |
-          echo "[default]" > ~/.aws/credentials
-          echo "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials
-          echo "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
+          echo "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          echo "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
