@@ -74,7 +74,7 @@ jobs:
   deploy:
     name: Deploy Application and Infrastructure
     runs-on: ubuntu-latest
-    needs: ['build']
+    # needs: ['build']
 
     steps:
     - name: Checkout Repository
