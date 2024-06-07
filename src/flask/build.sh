@@ -14,7 +14,7 @@ NGINX_SERVICE="nginx"
 HOST_PORT=5004
 CONTAINER_PORT=80
 
-cd ~/$REPO_NAME
+cd ~/$BUILD_PATH
 
 # Stop and remove the Docker container
 docker ps -q --filter "name=${CONTAINER_NAME}" | grep -q . && docker stop $CONTAINER_NAME
