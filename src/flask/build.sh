@@ -16,7 +16,7 @@ NGINX_SERVICE="nginx"
 HOST_PORT=5004
 CONTAINER_PORT=80
 
-cd ~$BUILD_PATH
+cd $BUILD_PATH
 
 # Stop and remove the Docker container
 docker ps -q --filter "name=${CONTAINER_NAME}" | grep -q . && docker stop $CONTAINER_NAME
@@ -37,6 +37,9 @@ sudo cp $NGINX_CONF_DIR/$(basename $NEW_CONF_FILE) $BACKUP_DIR/$(basename $NEW_C
 # Copy the new configuration file to the sites-enabled directory
 echo "Copying the new configuration file to the sites-enabled directory..."
 sudo cp $NEW_CONF_FILE $NGINX_CONF_DIR/
+
+# Create symlink
+sudo ln -s /etc/nginx/sites-enabled/$(basename $NEW_CONF_FILE) /etc/nginx/sites-available/  
 
 # Check nginx configuration syntax
 echo "Checking nginx configuration syntax..."
