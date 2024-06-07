@@ -7,6 +7,10 @@ variable "schedule_expression" {
   description   = "Cron expression for lambda function"
   type          = string
 }
+variable "schedule_state" {
+  description = "Toggle whether schedule is enabled or not - ENABLED or DISABLED"
+  type        = string
+}
 
 variable "target_function_arn" {
   description   = "Arn for lambda function"

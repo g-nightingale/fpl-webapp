@@ -8,6 +8,7 @@ locals {
 resource "aws_cloudwatch_event_rule" "schedule_rule" {
   name                = local.schedule_name
   schedule_expression = var.schedule_expression
+  state               = var.schedule_state
 }
 
 resource "aws_cloudwatch_event_target" "service_target" {

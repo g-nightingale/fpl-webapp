@@ -111,6 +111,7 @@ module "eventbridge_step_function" {
   target_function_arn       = module.fpl_step_function.step_function_arn
   target_function_name      = module.fpl_step_function.step_function_name
   target_function_role_name = module.fpl_step_function.step_function_role_name
+  schedule_state            = "DISABLED"
 }
 
 module "rds_postgres_db" {

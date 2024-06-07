@@ -4,11 +4,11 @@ variable "layer_name" {
   default     = "lambda_layer"
 }
 
-# variable "filename" {
-#   description = "The zip file to be used for the lambda layer"
-#   type        = string
-#   default     = ""
-# }
+variable "filename" {
+  description = "The zip file to be used for the lambda layer"
+  type        = string
+  default     = ""
+}
 
 variable "source_code_hash" {
   description   = "Hash of the source code"
