@@ -15,7 +15,6 @@ HOST_PORT=5004
 CONTAINER_PORT=80
 
 cd ~/$REPO_NAME
-git pull origin main # Pull latest code
 
 # Stop and remove the Docker container
 docker ps -q --filter "name=${CONTAINER_NAME}" | grep -q . && docker stop $CONTAINER_NAME
