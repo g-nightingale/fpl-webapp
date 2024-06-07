@@ -1,13 +1,13 @@
  # Commands to build and run the Docker container
 
 # Define variables
-REPO_NAME="fpl-webapp"
+BUILD_PATH="fpl-webapp/src/flask"
 APP_NAME="fpl-webapp"
 
 DOCKER_IMAGE="fpl-webapp"
 CONTAINER_NAME="fpl-webapp"
 
-NEW_CONF_FILE="~/fpl-webapp/src/fpl-webapp.conf"
+NEW_CONF_FILE="~/fpl-webapp/src/flask/fpl-webapp.conf"
 NGINX_CONF_DIR="/etc/nginx/sites-enabled"
 BACKUP_DIR="/etc/nginx/sites-enabled-backup"
 NGINX_SERVICE="nginx"
