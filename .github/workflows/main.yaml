@@ -123,7 +123,7 @@ jobs:
         # SSH to EC2 and run Docker commands
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_HOST << 'EOF'
 
-          git clone https://github.com/g-nightingale/fpl-webapp.git
+          # git clone https://github.com/g-nightingale/fpl-webapp.git
 
           # Pull latest code
           cd fpl-webapp

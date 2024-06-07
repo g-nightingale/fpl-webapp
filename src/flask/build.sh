@@ -1,7 +1,7 @@
  # Commands to build and run the Docker container
 
 # Define variables
-BUILD_PATH="fpl-webapp/src/flask"
+BUILD_PATH="~/fpl-webapp/src/flask"
 APP_NAME="fpl-webapp"
 
 DOCKER_IMAGE="fpl-webapp"
@@ -14,7 +14,7 @@ NGINX_SERVICE="nginx"
 HOST_PORT=5004
 CONTAINER_PORT=80
 
-cd ~/$BUILD_PATH
+cd $BUILD_PATH
 
 # Stop and remove the Docker container
 docker ps -q --filter "name=${CONTAINER_NAME}" | grep -q . && docker stop $CONTAINER_NAME
