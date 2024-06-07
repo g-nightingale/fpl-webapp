@@ -1,4 +1,6 @@
- # Commands to build and run the Docker container
+#!/bin/bash
+
+# Commands to build and run the Docker container
 
 # Define variables
 BUILD_PATH="~/fpl-webapp/src/flask"
@@ -26,9 +28,6 @@ docker images -q $DOCKER_IMAGE| grep -q . && docker rmi $DOCKER_IMAGE
 # Build and run the new Docker image
 docker build -t $DOCKER_IMAGE .
 docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $DOCKER_IMAGE
-
-# Update nginx stuff
-cd /etc/nginx
 
 # Create a backup of the current configuration file
 echo "Creating a backup of the current configuration file..."

@@ -126,7 +126,7 @@ jobs:
           # git clone https://github.com/g-nightingale/fpl-webapp.git
 
           # Pull latest code
-          cd fpl-webapp
+          cd ~/fpl-webapp
           git pull origin main 
 
           # Run the build script
