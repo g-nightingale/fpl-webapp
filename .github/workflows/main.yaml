@@ -123,11 +123,17 @@ jobs:
         # SSH to EC2 and run Docker commands
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$EC2_HOST << 'EOF'
 
-          # git clone https://github.com/g-nightingale/fpl-webapp.git
-
-          # Pull latest code
-          cd ~/fpl-webapp
-          git pull origin main 
+          # Check if the directory exists
+          if [ -d ~/fpl-webapp ]; then
+            echo "Directory /fpl-webapp exists."
+            # Pull latest code
+            cd ~/fpl-webapp
+            git pull origin main 
+          else
+            echo "Directory /fpl-webapp does not exist. Cloning repo..."
+            git clone https://github.com/g-nightingale/fpl-webapp.git
+            echo "Directory $DIRECTORY created."
+          fi
 
           # Run the build script
           cd ~/fpl-webapp/src/flask
