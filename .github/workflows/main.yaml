@@ -136,7 +136,7 @@ jobs:
           fi
 
           # Run the build script
-          cd ~/fpl-webapp/src/flask
+          cd ~/fpl-webapp/src/
           chmod +x build.sh
           ./build.sh
 
