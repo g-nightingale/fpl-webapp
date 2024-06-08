@@ -10,8 +10,8 @@ DOCKER_IMAGE="fpl-webapp"
 CONTAINER_NAME="fpl-webapp"
 
 NEW_CONF_FILE="/home/ubuntu/fpl-webapp/src/flask/fpl-webapp.conf"
-NGINX_CONF_DIR="/etc/nginx/sites-enabled"
-BACKUP_DIR="/etc/nginx/sites-enabled-backup"
+NGINX_CONF_DIR="/etc/nginx/sites-available"
+BACKUP_DIR="/etc/nginx/sites-available-backup"
 NGINX_SERVICE="nginx"
 HOST_PORT=5004
 CONTAINER_PORT=80
@@ -39,7 +39,7 @@ echo "Copying the new configuration file to the sites-enabled directory..."
 sudo cp $NEW_CONF_FILE $NGINX_CONF_DIR/
 
 # Create symlink
-sudo ln -s /etc/nginx/sites-enabled/$(basename $NEW_CONF_FILE) /etc/nginx/sites-available/  
+sudo ln -s /etc/nginx/sites-available/$(basename $NEW_CONF_FILE) /etc/nginx/sites-enabled/ 
 
 # Check nginx configuration syntax
 echo "Checking nginx configuration syntax..."
