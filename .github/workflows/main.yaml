@@ -133,10 +133,10 @@ jobs:
             echo "Directory /fpl-webapp does not exist. Cloning repo..."
             git clone https://github.com/g-nightingale/fpl-webapp.git
             echo "Directory $DIRECTORY created."
+            cd ~/fpl-webapp
           fi
 
           # Run the build script
-          cd ~/fpl-webapp/src/
           chmod +x build.sh
           ./build.sh
 
