@@ -4,8 +4,30 @@ import pandas as pd
 import sys
 import os
 
+from pathlib import Path
+
+def print_directory_contents(path):
+    try:
+        # Create a Path object
+        path_obj = Path(path)
+        
+        if not path_obj.exists():
+            print(f"The directory '{path}' does not exist.")
+            return
+        if not path_obj.is_dir():
+            print(f"The path '{path}' is not a directory.")
+            return
+        
+        print(f"Contents of '{path}':")
+        for item in path_obj.iterdir():
+            print(item.name)
+    except PermissionError:
+        print(f"Permission denied to access '{path}'.")
+
 # Hack to use relative imports
 utils_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../utilities'))
+print_directory_contents(utils_dir)
+
 if utils_dir not in sys.path:
     sys.path.append(utils_dir)
 
