@@ -9,7 +9,7 @@ APP_NAME="fpl-webapp"
 DOCKER_IMAGE="fpl-webapp"
 CONTAINER_NAME="fpl-webapp"
 
-NEW_CONF_FILE="/home/ubuntu/fpl-webapp/src/flask/fpl-webapp.conf"
+NEW_CONF_FILE="/home/ubuntu/fpl-webapp/src/flask/geoffai.conf"
 NGINX_CONF_DIR="/etc/nginx/sites-available"
 BACKUP_DIR="/etc/nginx/sites-available-backup"
 NGINX_SERVICE="nginx"
