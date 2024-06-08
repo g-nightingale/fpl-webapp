@@ -126,8 +126,10 @@ jobs:
           # Check if the directory exists
           if [ -d ~/fpl-webapp ]; then
             echo "Directory /fpl-webapp exists."
+
             # Pull latest code
             cd ~/fpl-webapp
+            git reset --hard origin/main
             git pull origin main 
           else
             echo "Directory /fpl-webapp does not exist. Cloning repo..."
