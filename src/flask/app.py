@@ -44,4 +44,6 @@ if __name__ == '__main__':
     # Load config dict
     # config = ut.load_config()
     # app.run(host=config['host'], port=config['port'], debug=config['debug'])
-    app.run(host='0.0.0.0', port='5000', debug=True)
+    app.run(host='0.0.0.0', port='80', debug=True)
+
+    
