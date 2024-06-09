@@ -31,9 +31,14 @@ docker images -q $DOCKER_IMAGE| grep -q . && docker rmi $DOCKER_IMAGE
 docker build -t $DOCKER_IMAGE .
 docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT -v $LOCAL_STATIC_DIR:$CONTAINER_STATIC_DIR $DOCKER_IMAGE 
 
-# Change ownership and permissions
+# Set ownership to www-data user and group
 sudo chown -R www-data:www-data $LOCAL_STATIC_DIR
-sudp chmod -R 755 $LOCAL_STATIC_DIR
+
+# Set directory permissions to 755
+sudo find $LOCAL_STATIC_DIR -type d -exec chmod 755 {} \;
+
+# Set file permissions to 644
+sudo find $LOCAL_STATIC_DIR -type f -exec chmod 644 {} \;
 
 # Create a backup of the current configuration file
 echo "Creating a backup of the current configuration file..."
