@@ -15,7 +15,7 @@ from dynamodb_helpers import get_data_from_dynamo_db
 
 
 app = Flask(__name__)
-
+app.config['APPLICATION_ROOT'] = '/fpl-webapp'
 
 def query_database_for_player(player_name):
     return player_name
