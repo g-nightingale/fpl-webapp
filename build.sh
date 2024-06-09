@@ -40,6 +40,8 @@ sudo find $LOCAL_STATIC_DIR -type d -exec chmod 755 {} \;
 # Set file permissions to 644
 sudo find $LOCAL_STATIC_DIR -type f -exec chmod 644 {} \;
 
+sudo find $LOCAL_STATIC_DIR -type d -exec chmod o+x {} \;
+
 # Create a backup of the current configuration file
 echo "Creating a backup of the current configuration file..."
 sudo mkdir -p $BACKUP_DIR
