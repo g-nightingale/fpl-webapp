@@ -29,7 +29,7 @@ docker images -q $DOCKER_IMAGE| grep -q . && docker rmi $DOCKER_IMAGE
 
 # Build and run the new Docker image
 docker build -t $DOCKER_IMAGE .
-docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $DOCKER_IMAGE -v $LOCAL_STATIC_DIR:$CONTAINER_STATIC_DIR
+docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT -v $LOCAL_STATIC_DIR:$CONTAINER_STATIC_DIR $DOCKER_IMAGE 
 
 chmod -R 755 $LOCAL_STATIC_DIR
 
