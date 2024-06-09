@@ -3,20 +3,22 @@
 # Commands to build and run the Docker container
 
 # Define variables
-DOCKER_PATH="/home/ubuntu/fpl-webapp"
+DOCKERFILE_DIR="/home/ubuntu/fpl-webapp"
 APP_NAME="fpl-webapp"
 
 DOCKER_IMAGE="fpl-webapp"
 CONTAINER_NAME="fpl-webapp"
 
 NEW_CONF_FILE="/home/ubuntu/fpl-webapp/src/flask/geoffai.conf"
+LOCAL_STATIC_DIR="/home/ubuntu/fpl-webapp/src/flask/static"
+CONTAINER_STATIC_DIR="/home/ubuntu/fpl-webapp/src/flask/static"
 NGINX_CONF_DIR="/etc/nginx/sites-available"
 BACKUP_DIR="/etc/nginx/sites-available-backup"
 NGINX_SERVICE="nginx"
 HOST_PORT=5004
 CONTAINER_PORT=80
 
-cd $DOCKER_PATH
+cd $DOCKERFILE_DIR
 
 # Stop and remove the Docker container
 docker ps -q --filter "name=${CONTAINER_NAME}" | grep -q . && docker stop $CONTAINER_NAME
@@ -27,7 +29,9 @@ docker images -q $DOCKER_IMAGE| grep -q . && docker rmi $DOCKER_IMAGE
 
 # Build and run the new Docker image
 docker build -t $DOCKER_IMAGE .
-docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $DOCKER_IMAGE
+docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $DOCKER_IMAGE -v $LOCAL_STATIC_DIR:$CONTAINER_STATIC_DIR
+
+chmod -R 755 $LOCAL_STATIC_DIR
 
 # Create a backup of the current configuration file
 echo "Creating a backup of the current configuration file..."
