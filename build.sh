@@ -11,7 +11,7 @@ CONTAINER_NAME="fpl-webapp"
 
 NEW_CONF_FILE="/home/ubuntu/fpl-webapp/src/flask/geoffai.conf"
 LOCAL_STATIC_DIR="/home/ubuntu/fpl-webapp/src/flask/static"
-CONTAINER_STATIC_DIR="/home/ubuntu/fpl-webapp/src/flask/static"
+CONTAINER_STATIC_DIR="/app/src/flask/static"
 NGINX_CONF_DIR="/etc/nginx/sites-available"
 BACKUP_DIR="/etc/nginx/sites-available-backup"
 NGINX_SERVICE="nginx"
