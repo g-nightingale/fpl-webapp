@@ -1,5 +1,5 @@
 import pandas as pd
-
+from sklearn.preprocessing import StandardScaler
 
 test_data = {
     'element': [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3],
@@ -83,6 +83,20 @@ def create_cumulative_pct_of_max(df, grouping_feature, features_list, name_prefi
 
     return df
 
+def scale_features(df, features_to_scale, name_suffix='_stdsclr'):
+    # Initialize the StandardScaler
+    scaler = StandardScaler()
+
+    # Fit and transform the selected features
+    scaled_features = scaler.fit_transform(df[features_to_scale])
+
+    # Create a DataFrame with the scaled features, appending "_scl" to the column names
+    scaled_features_df = pd.DataFrame(scaled_features, columns=[f"{col}{name_suffix}" for col in features_to_scale])
+
+    # Concatenate the scaled features DataFrame to the original DataFrame
+    df = pd.concat([df, scaled_features_df], axis=1)
+
+    return df
 
 def main():
     df = pd.DataFrame(test_data)
@@ -93,6 +107,7 @@ def main():
     df = create_lagged_sums(df, 'element', features_list, [3], name_prefix=name_prefix)
     df = create_pct_of_max(df, features_list, name_prefix=name_prefix)
     df = create_cumulative_pct_of_max(df, 'element', features_list, name_prefix=name_prefix)
+    df = scale_features(df, features_list)
     # df['pct_of_max'] = create_cumulative_pct_of_max(grouped_by_element, grouped_by_round, 'feature_1')
     print(df.head(20), '\n')
 

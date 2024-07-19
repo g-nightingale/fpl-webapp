@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from transform_helpers import create_lagged_sums, create_pct_of_max, create_cumulative_pct_of_max
+from transform_helpers import create_lagged_sums, create_pct_of_max, create_cumulative_pct_of_max, scale_features
 import os
 import sys
 
@@ -100,6 +100,9 @@ def team_data_transformations():
         team_data['goal_difference_l3r'] = team_data.groupby('id')['goal_difference'].rolling(window=3, min_periods=1).sum().reset_index(drop=True) #transform(lambda x: pd.rolling_sum(x, window=3, min_periods=1))
         team_data['avg_opp_difficulty_l3r'] = team_data.groupby('id')['opponent_difficulty'].rolling(window=3, min_periods=1).mean().reset_index(drop=True) #transform(lambda x: pd.rolling_mean(x, window=3, min_periods=1))
 
+        team_data['avg_opp_difficulty_n3r'] = team_data.iloc[::-1].groupby('id')['opponent_difficulty'].transform(lambda x: x.shift(1).rolling(window=3, min_periods=1).mean()).iloc[::-1]
+        team_data['avg_difficulty_difference_n3r'] = team_data.iloc[::-1].groupby('id')['difficulty_difference'].transform(lambda x: x.shift(1).rolling(window=3, min_periods=1).mean()).iloc[::-1]
+
         for i in range(1, 7):
            team_data['opp_round_' + str(i)] = team_data['opponent'].shift(-i)
            team_data['fixture_round_' + str(i)] = team_data['fixture'].shift(-i)
@@ -163,6 +166,11 @@ def create_transformed_player_history_data():
                             ELSE 0 
                     END     AS was_home, 
                     a.yellow_cards, 
+                    a.starts,
+                    a.expected_goals,
+                    a.expected_assists,
+                    a.expected_goal_involvements,
+                    a.expected_goals_conceded,
                     c.id as team_id,
                     d.code as team_code,
                     b.first_name,
@@ -171,6 +179,8 @@ def create_transformed_player_history_data():
                     b.element_type as position_code,
                     d.name as team_name,
                     b1.singular_name_short as position, 
+                    c.avg_opp_difficulty_n3r,
+                    c.avg_difficulty_difference_n3r,
                     c.opp_round_1,
                     c.opp_round_2,
                     c.opp_round_3,
@@ -262,10 +272,15 @@ def modelling_data_transformations():
                 'opp_round_3': 'max',
                 'opp_round_4': 'max',
                 'opp_round_5': 'max',
-                'opp_round_6': 'max'}
+                'opp_round_6': 'max',
+                'avg_opp_difficulty_n3r': 'max',
+                'avg_difficulty_difference_n3r': 'max'}
+    team_scaling_features = ['avg_opp_difficulty_n3r', 'avg_difficulty_difference_n3r']
 
     # Assuming player_temp, team_data1, and opp_dict are defined elsewhere
     opponent_data = player_temp.groupby(['team_name', 'team_id', 'round']).agg(opp_dict).reset_index()
+    opponent_data = scale_features(opponent_data, team_scaling_features)
+    # opponent_data.to_csv('check.csv')
 
     # Define opponent features based on the transformed team data
     opp_features = [
@@ -316,6 +331,11 @@ def modelling_data_transformations():
     # Drop auxiliary merge features
     opponent_data.drop(columns=[f'{feat}{r}' for feat in ['opp_round_', 'team_id_team_opp', 'round_team_opp'] for r in range(1, 7)], axis=1, inplace=True)
 
+    opponent_data.rename({'avg_opp_difficulty_n3r_x':'avg_opp_difficulty_n3r',
+                          'avg_difficulty_difference_n3r_x':'avg_difficulty_difference_n3r'}, inplace=True)
+    
+
+    
     #----------------------------------------------------------------------     
     # 3. Generate player level features
     #----------------------------------------------------------------------
@@ -324,7 +344,9 @@ def modelling_data_transformations():
     vars_list = [
         'total_points', 'value', 'transfers_balance', 'selected', 'transfers_in', 'transfers_out', 'ict_index', 'minutes',
         'goals_scored', 'assists', 'clean_sheets', 'goals_conceded', 'own_goals', 'penalties_saved', 'penalties_missed',
-        'yellow_cards', 'red_cards', 'saves', 'bonus', 'bps', 'influence', 'creativity', 'threat', 'was_home'
+        'yellow_cards', 'red_cards', 'saves', 'bonus', 'bps', 'influence', 'creativity', 'threat', 'was_home',
+        'starts', 'expected_goals', 'expected_assists', 'expected_goal_involvements', 'expected_goals_conceded',
+
     ]
 
     vars_core = player_temp.columns.difference(vars_list, sort=False).to_list()
@@ -334,12 +356,16 @@ def modelling_data_transformations():
     player_data = player_temp.copy()[['element', 'round'] + vars_list]
     
     # Create lagged sum features
-    player_data = create_lagged_sums(player_data, 'element', vars_list, [3, 6])
+    player_data = create_lagged_sums(player_data, 'element', vars_list, lag_list)
 
     # Create percentage of max features
     vars_list_2 = player_data.columns.difference(['element', 'round'], sort=False).to_list()
     player_data = create_pct_of_max(player_data, vars_list_2)
     player_data = create_cumulative_pct_of_max(player_data, 'element', vars_list_2)
+
+    # Scale features
+    vars_list_3 = player_data.columns.difference(['element', 'round'], sort=False).to_list()
+    player_data = scale_features(player_data, vars_list_3)
 
     # Calculate and store ratio features for both raw lags and pct_of_max lags in the list
     new_features = []
@@ -400,16 +426,23 @@ def modelling_data_transformations():
     modelling_data['total_points_cum'] = grouped['total_points'].cumsum()
     
     # Instead of reversing and then rolling, we directly calculate the future rolling sum by shifting first
-    shifted_data = modelling_data[::-1].groupby('element')['total_points'].transform(lambda x: x.shift(1))
-    modelling_data['total_points_sum_nr'] = shifted_data
-    modelling_data['total_points_sum_n3r'] = shifted_data.rolling(window=3, min_periods=1).sum()
-    modelling_data['total_points_sum_n6r'] = shifted_data.rolling(window=6, min_periods=1).sum()
+    modelling_data['total_points_sum_nr'] = modelling_data.iloc[::-1].groupby('element')['total_points'].transform(lambda x: x.shift(1).rolling(window=1, min_periods=1).sum()).iloc[::-1]
+    modelling_data['total_points_sum_n3r'] = modelling_data.iloc[::-1].groupby('element')['total_points'].transform(lambda x: x.shift(1).rolling(window=3, min_periods=1).sum()).iloc[::-1]
+    modelling_data['total_points_sum_n6r'] = modelling_data.iloc[::-1].groupby('element')['total_points'].transform(lambda x: x.shift(1).rolling(window=6, min_periods=1).sum()).iloc[::-1]
 
     # 'total_points_cum' max for each 'element'
     modelling_data['total_points_sum_all'] = grouped['total_points_cum'].transform('max')
 
     # Calculating points per game week forward
     modelling_data['total_points_per_gw_forward'] = (modelling_data['total_points_sum_all'] - modelling_data['total_points_cum']) / (38 - modelling_data['round'])
+
+    # Points derivation features
+    modelling_data['minutes_sum_n3r'] = modelling_data.iloc[::-1].groupby('element')['minutes'].transform(lambda x: x.shift(1).rolling(window=3, min_periods=1).sum()).iloc[::-1]
+    modelling_data['goals_scored_sum_n3r'] = modelling_data.iloc[::-1].groupby('element')['goals_scored'].transform(lambda x: x.shift(1).rolling(window=3, min_periods=1).sum()).iloc[::-1]
+    modelling_data['assists_sum_n3r'] = modelling_data.iloc[::-1].groupby('element')['assists'].transform(lambda x: x.shift(1).rolling(window=3, min_periods=1).sum()).iloc[::-1]
+    modelling_data['clean_sheets_sum_n3r'] = modelling_data.iloc[::-1].groupby('element')['clean_sheets'].transform(lambda x: x.shift(1).rolling(window=3, min_periods=1).sum()).iloc[::-1]
+    modelling_data['goals_conceded_sum_n3r'] = modelling_data.iloc[::-1].groupby('element')['goals_conceded'].transform(lambda x: x.shift(1).rolling(window=3, min_periods=1).sum()).iloc[::-1]
+    modelling_data['saves_sum_n3r'] = modelling_data.iloc[::-1].groupby('element')['saves'].transform(lambda x: x.shift(1).rolling(window=3, min_periods=1).sum()).iloc[::-1]
 
     grouped = modelling_data.groupby('element')
     modelling_data['value_nr'] = grouped['value'].shift(-1)
@@ -437,6 +470,7 @@ def modelling_data_transformations():
     modelling_data['transfers_out_nr'] = grouped['transfers_out'].shift(-1)
     modelling_data['transfers_balance_nr'] = grouped['transfers_balance'].shift(-1)
     modelling_data['ict_index_nr'] = grouped['ict_index'].shift(-1)
+    modelling_data['minutes_nr'] = grouped['minutes'].shift(-1)
 
     columns_to_replace = [
         'selected_nr', 'transfers_in_nr', 'transfers_out_nr',
@@ -474,21 +508,23 @@ def create_modelling_data():
 
     drop_table(TABLE_NAME)
     modelling_data = modelling_data_transformations()
-    create_table_from_df(TABLE_NAME, modelling_data)
+    modelling_data.to_csv('modelling_data.csv')
+    # create_table_from_df(TABLE_NAME, modelling_data)
 
 if __name__ == '__main__':
 
     inspect_tables()
 
     run_query("SELECT * FROM raw_teams;")
+    # run_query("SELECT * FROM raw_player_history;")
     
     # run_query("SELECT 'total rows: ' || count(*) FROM raw_player_history;")
     # run_query("SELECT 'total rows: ' || count(*) FROM raw_player_history;")
     # all_team_data = team_data_transformations()
 
     # create_player_static_data()
-    # create_transformed_team_data()
-    # create_transformed_player_history_data()
-    # create_modelling_data()
+    create_transformed_team_data()
+    create_transformed_player_history_data()
+    create_modelling_data()
 
     # inspect_tables()
